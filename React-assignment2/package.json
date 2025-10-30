@@ -4,6 +4,8 @@
   "description": "first react app",
 
   "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html",
     "test": "jest"
   },
   "repository": {
@@ -22,6 +24,10 @@
     "url": "https://github.com/PatnalaMadhuShalini/Tmf_react/issues"
   },
   "homepage": "https://github.com/PatnalaMadhuShalini/Tmf_react#readme",
+  "browserslist": [
+    "last 2 versions",
+    "not dead"
+  ],
   "devDependencies": {
     "parcel": "^2.16.0"
   },
