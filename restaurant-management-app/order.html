@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order - TripurnaRasa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bamboo-bg">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark dojo-nav">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="https://via.placeholder.com/50x50?text=Po" alt="Chef Po" class="me-2">
+                TripurnaRasa Restaurant
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="navbar-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="navbar-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="navbar-item"><a class="nav-link" href="restaurants.html">Restaurants</a></li>
+                    <li class="navbar-item"><a class="nav-link" href="menu.html">Menu</a></li>
+                    <li class="navbar-item"><a class="nav-link active" href="order.html">Order</a></li>
+                    <li class="navbar-item"><a class="nav-link" href="billing.html">Billing</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="scroll-panel">
+                    <h2>Place Your Order</h2>
+                    <div id="orderItems"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="lantern-panel">
+                    <h3>Cart</h3>
+                    <div id="cartItems"></div>
+                    <hr>
+                    <p>Total: $<span id="cartTotal">0.00</span></p>
+                    <a href="billing.html" class="btn btn-success">Proceed to Billing</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

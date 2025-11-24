@@ -1,0 +1,139 @@
+/* TripurnaRasa Theme Styles */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f1e8;
+}
+
+.bamboo-bg {
+    background-image: url('https://via.placeholder.com/1920x1080?text=Bamboo+Texture');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.dojo-nav {
+    background: linear-gradient(45deg, #8b4513, #daa520);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.scroll-panel {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #daa520;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.scroll-panel::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #daa520;
+    border-radius: 50%;
+}
+
+.lantern-panel {
+    background: rgba(255, 248, 220, 0.9);
+    border: 2px solid #ff4500;
+    border-radius: 50px 50px 10px 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.character-img {
+    border-radius: 50%;
+    border: 3px solid #daa520;
+    transition: transform 0.3s;
+}
+
+.character-img:hover {
+    transform: scale(1.1);
+}
+
+.character-tooltip {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #daa520;
+    border-color: #daa520;
+}
+
+.btn-primary:hover {
+    background-color: #b8860b;
+    border-color: #b8860b;
+}
+
+.btn-success {
+    background-color: #228b22;
+    border-color: #228b22;
+}
+
+.btn-success:hover {
+    background-color: #006400;
+    border-color: #006400;
+}
+
+.restaurant-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #daa520;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.menu-item {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #daa520;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+}
+
+.menu-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cart-item {
+    background: rgba(255, 248, 220, 0.9);
+    border: 1px solid #ff4500;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Animations */
+@keyframes lanternGlow {
+    0% { box-shadow: 0 0 5px #ff4500; }
+    50% { box-shadow: 0 0 20px #ff4500; }
+    100% { box-shadow: 0 0 5px #ff4500; }
+}
+
+.lantern-panel {
+    animation: lanternGlow 3s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .scroll-panel {
+        padding: 15px;
+    }
+    .lantern-panel {
+        margin-top: 20px;
+    }
+}
