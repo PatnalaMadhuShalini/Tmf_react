@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineBook - Movie Tickets, Plays, Sports & Events</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        /* Location Modal */
+        .location-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .location-modal.show {
+            display: flex;
+        }
+
+        .location-modal-content {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            text-align: center;
+        }
+
+        .modal-subtitle {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .location-search {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .location-search input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.15);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #fff;
+        }
+
+        .location-search input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .location-search input:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+        }
+
+        .popular-cities-title {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .city-card {
+            padding: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .city-card:hover {
+            border-color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .city-card.selected {
+            border-color: #fff;
+            background: rgba(255,255,255,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .cities-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            padding: 0.5rem;
+        }
+
+        .cities-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cities-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .cities-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.4);
+            border-radius: 10px;
+        }
+
+        .city-list-item {
+            padding: 0.9rem;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: background 0.2s;
+            color: #fff;
+            border-radius: 8px;
+            margin-bottom: 0.3rem;
+        }
+
+        .city-list-item:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Header */
+        header {
+            background: rgba(255,255,255,0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #6366f1;
+        }
+
+        .header-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            letter-spacing: -1px;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .header-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .header-location:hover {
+            color: #6366f1;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .btn-signin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 0.7rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-signin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        /* Navigation */
+        nav {
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            padding: 1.2rem 0;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+
+        .nav-link.active {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+            font-weight: 600;
+        }
+
+        /* Banner Slider */
+        .banner-section {
+            max-width: 1440px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .banner-slider {
+            position: relative;
+            height: 450px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .banner-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+
+        .banner-dot.active {
+            background: #fff;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* Quick Filters */
+        .filters-section {
+            background: rgba(255,255,255,0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 125px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .filters-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .filters-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            padding: 0.6rem 1.5rem;
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .filter-chip:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Movies Section */
+        .section {
+            max-width: 1440px;
+            margin: 2.5rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .see-all {
+            color: #6366f1;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .see-all:hover {
+            transform: translateX(5px);
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem 1.5rem;
+        }
+
+        .movie-card {
+            cursor: pointer;
+            transition: transform 0.3s;
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .movie-poster {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        .movie-badge {
+            position: absolute;
+            top: 0.8rem;
+            left: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 0 15px 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .movie-rating {
+            position: absolute;
+            bottom: 0.8rem;
+            left: 0.8rem;
+            background: rgba(0,0,0,0.85);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+        }
+
+        .votes {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .movie-info {
+            padding: 1rem;
+        }
+
+        .movie-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #333;
+        }
+
+        .movie-genre {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .coming-soon-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 0.6rem;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Entertainment Options */
+        .entertainment-section {
+            background: #fff;
+            padding: 2rem 0;
+            margin: 2rem 0;
+        }
+
+        .entertainment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .entertainment-card {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .entertainment-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .entertainment-icon {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .entertainment-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: #fff;
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #999;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #444;
+            padding-top: 1rem;
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            background: #444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .social-icon:hover {
+            background: #6366f1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .search-container {
+                display: none;
+            }
+
+            .header-actions {
+                gap: 0.8rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+                gap: 1rem;
+                overflow-x: auto;
+            }
+
+            .banner-slider {
+                height: 250px;
+            }
+
+            .section {
+                padding: 0 1rem;
+            }
+
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1.5rem 1rem;
+            }
+
+            .cities-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Location Modal -->
+    <div class="location-modal show" id="locationModal">
+        <div class="location-modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-header">
+                <h2>Select Your City</h2>
+                <p class="modal-subtitle">Select a city to see movies & events near you</p>
+            </div>
+
+            <div class="location-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search for your city" id="citySearch" oninput="filterCities()">
+            </div>
+
+            <h3 class="popular-cities-title">Popular Cities</h3>
+            <div class="cities-grid" id="popularCities">
+                <div class="city-card" onclick="selectCity('Mumbai', this)">Mumbai</div>
+                <div class="city-card" onclick="selectCity('Delhi-NCR', this)">Delhi-NCR</div>
+                <div class="city-card" onclick="selectCity('Bengaluru', this)">Bengaluru</div>
+                <div class="city-card" onclick="selectCity('Hyderabad', this)">Hyderabad</div>
+                <div class="city-card" onclick="selectCity('Ahmedabad', this)">Ahmedabad</div>
+                <div class="city-card" onclick="selectCity('Chandigarh', this)">Chandigarh</div>
+                <div class="city-card" onclick="selectCity('Chennai', this)">Chennai</div>
+                <div class="city-card" onclick="selectCity('Pune', this)">Pune</div>
+                <div class="city-card" onclick="selectCity('Kolkata', this)">Kolkata</div>
+                <div class="city-card" onclick="selectCity('Kochi', this)">Kochi</div>
+            </div>
+
+            <h3 class="popular-cities-title" style="margin-top: 1.5rem;">Other Cities</h3>
+            <div class="cities-list" id="otherCities">
+                <div class="city-list-item" onclick="selectCity('Vijayawada', this)">Vijayawada</div>
+                <div class="city-list-item" onclick="selectCity('Visakhapatnam', this)">Visakhapatnam</div>
+                <div class="city-list-item" onclick="selectCity('Gurgaon', this)">Gurgaon</div>
+                <div class="city-list-item" onclick="selectCity('Noida', this)">Noida</div>
+                <div class="city-list-item" onclick="selectCity('Jaipur', this)">Jaipur</div>
+                <div class="city-list-item" onclick="selectCity('Lucknow', this)">Lucknow</div>
+                <div class="city-list-item" onclick="selectCity('Surat', this)">Surat</div>
+                <div class="city-list-item" onclick="selectCity('Nagpur', this)">Nagpur</div>
+                <div class="city-list-item" onclick="selectCity('Indore', this)">Indore</div>
+                <div class="city-list-item" onclick="selectCity('Bhopal', this)">Bhopal</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">CineBook</div>
+            
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-bar" placeholder="Search for Movies, Events, Plays, Sports and Activities" oninput="searchContent()">
+            </div>
+
+            <div class="header-location" onclick="openLocationModal()">
+                <span id="currentCity">Vijayawada</span> ▼
+            </div>
+
+            <div class="header-actions">
+                <button class="btn-signin" onclick="goToLogin()">Sign in</button>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="nav-link active">Movies</a>
+            <a href="#" class="nav-link">Stream</a>
+            <a href="#" class="nav-link">Events</a>
+            <a href="#" class="nav-link">Plays</a>
+            <a href="#" class="nav-link">Sports</a>
+            <a href="#" class="nav-link">Activities</a>
+        </div>
+    </nav>
+
+    <!-- Banner Slider -->
+    <section class="banner-section">
+        <div class="banner-slider">
+            <div class="banner-slide active">
+                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1400&h=400&fit=crop" alt="Banner">
+            </div>
+            <div class="banner-slide">
+                <img src="https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=1400&h=400&fit=crop" alt="Banner">
+            </div>
+            <div class="banner-slide">
+                <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1400&h=400&fit=crop" alt="Banner">
+            </div>
+            <div class="banner-slide">
+                <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1400&h=400&fit=crop" alt="Banner">
+            </div>
+            <div class="banner-dots">
+                <span class="banner-dot active" onclick="goToBanner(0)"></span>
+                <span class="banner-dot" onclick="goToBanner(1)"></span>
+                <span class="banner-dot" onclick="goToBanner(2)"></span>
+                <span class="banner-dot" onclick="goToBanner(3)"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters-section">
+        <div class="filters-container">
+            <div class="filter-chip active" onclick="filterMovies('all')">All</div>
+            <div class="filter-chip" onclick="filterMovies('telugu')">Telugu</div>
+            <div class="filter-chip" onclick="filterMovies('hindi')">Hindi</div>
+            <div class="filter-chip" onclick="filterMovies('english')">English</div>
+            <div class="filter-chip" onclick="filterMovies('tamil')">Tamil</div>
+            <div class="filter-chip" onclick="filterMovies('2d')">2D</div>
+            <div class="filter-chip" onclick="filterMovies('3d')">3D</div>
+            <div class="filter-chip" onclick="filterMovies('imax')">IMAX</div>
+        </div>
+    </section>
+
+    <!-- Recommended Movies -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">Recommended Movies</h2>
+            <a href="#" class="see-all">See All →</a>
+        </div>
+        <div class="movies-grid">
+            <div class="movie-card" onclick="viewMovie(1)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">IMAX</div>
+                    <div class="movie-rating">⭐ 8.5/10 <span class="votes">124K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">The Phantom Quest</div>
+                    <div class="movie-genre">Action/Adventure/Thriller</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(2)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">3D</div>
+                    <div class="movie-rating">⭐ 9.0/10 <span class="votes">98K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Stellar Dreams</div>
+                    <div class="movie-genre">Sci-Fi/Thriller</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(3)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">2D</div>
+                    <div class="movie-rating">⭐ 8.8/10 <span class="votes">156K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Love & Thunder</div>
+                    <div class="movie-genre">Romance/Drama</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(4)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">2D</div>
+                    <div class="movie-rating">⭐ 8.2/10 <span class="votes">87K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Mystery Island</div>
+                    <div class="movie-genre">Mystery/Adventure</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(5)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">4DX</div>
+                    <div class="movie-rating">⭐ 8.7/10 <span class="votes">112K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Fast Lane</div>
+                    <div class="movie-genre">Action/Thriller</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(6)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">IMAX</div>
+                    <div class="movie-rating">⭐ 8.9/10 <span class="votes">134K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Kingdom Rising</div>
+                    <div class="movie-genre">Action/Fantasy</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(7)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">3D</div>
+                    <div class="movie-rating">⭐ 7.8/10 <span class="votes">76K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Laugh Riot</div>
+                    <div class="movie-genre">Comedy/Family</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(8)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c?w=300&h=450&fit=crop" alt="Movie">
+                    <div class="movie-badge">2D</div>
+                    <div class="movie-rating">⭐ 8.4/10 <span class="votes">91K votes</span></div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Dark Shadows</div>
+                    <div class="movie-genre">Horror/Thriller</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coming Soon -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">Coming Soon</h2>
+            <a href="#" class="see-all">Explore Upcoming Movies →</a>
+        </div>
+        <div class="movies-grid">
+            <div class="movie-card" onclick="viewMovie(9)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1595769816263-9b910be24d5f?w=300&h=450&fit=crop" alt="Movie">
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Galactic Warriors</div>
+                    <div class="movie-genre">Sci-Fi/Action</div>
+                    <div class="coming-soon-badge">DEC 25</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(10)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=300&h=450&fit=crop" alt="Movie">
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Heart Strings</div>
+                    <div class="movie-genre">Romance/Musical</div>
+                    <div class="coming-soon-badge">JAN 5</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(11)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1574267432644-f74f331c5f41?w=300&h=450&fit=crop" alt="Movie">
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">The Last Stand</div>
+                    <div class="movie-genre">Action/Drama</div>
+                    <div class="coming-soon-badge">JAN 12</div>
+                </div>
+            </div>
+
+            <div class="movie-card" onclick="viewMovie(12)">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=300&h=450&fit=crop" alt="Movie">
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Haunted Manor</div>
+                    <div class="movie-genre">Horror/Mystery</div>
+                    <div class="coming-soon-badge">JAN 20</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Best Of Entertainment -->
+    <section class="entertainment-section">
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">The Best Of Entertainment</h2>
+            </div>
+            <div class="entertainment-grid">
+                <div class="entertainment-card">
+                    <div class="entertainment-icon" style="background: linear-gradient(135deg, #fa7d09 0%, #f9cb28 100%);">🎭</div>
+                    <div class="entertainment-title">Plays</div>
+                </div>
+                <div class="entertainment-card">
+                    <div class="entertainment-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">⚽</div>
+                    <div class="entertainment-title">Sports</div>
+                </div>
+                <div class="entertainment-card">
+                    <div class="entertainment-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">🎵</div>
+                    <div class="entertainment-title">Music Shows</div>
+                </div>
+                <div class="entertainment-card">
+                    <div class="entertainment-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🎤</div>
+                    <div class="entertainment-title">Comedy Shows</div>
+                </div>
+                <div class="entertainment-card">
+                    <div class="entertainment-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🎨</div>
+                    <div class="entertainment-title">Workshops</div>
+                </div>
+                <div class="entertainment-card">
+                    <div class="entertainment-icon" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);">🎪</div>
+                    <div class="entertainment-title">Kids</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Movies Now Showing</h4>
+                <ul class="footer-links">
+                    <li><a href="#">The Phantom Quest</a></li>
+                    <li><a href="#">Stellar Dreams</a></li>
+                    <li><a href="#">Love & Thunder</a></li>
+                    <li><a href="#">Mystery Island</a></li>
+                    <li><a href="#">Fast Lane</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Movies By Genre</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Action Movies</a></li>
+                    <li><a href="#">Drama Movies</a></li>
+                    <li><a href="#">Comedy Movies</a></li>
+                    <li><a href="#">Thriller Movies</a></li>
+                    <li><a href="#">Romance Movies</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Cities</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Mumbai</a></li>
+                    <li><a href="#">Delhi-NCR</a></li>
+                    <li><a href="#">Bengaluru</a></li>
+                    <li><a href="#">Hyderabad</a></li>
+                    <li><a href="#">Chennai</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Help</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <div class="social-icon">📘</div>
+                    <div class="social-icon">📷</div>
+                    <div class="social-icon">🐦</div>
+                    <div class="social-icon">📺</div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 CineBook Ltd. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Location Modal Management
+        let selectedCity = 'Vijayawada';
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedCity = sessionStorage.getItem('selectedCity');
+            if (savedCity) {
+                selectedCity = savedCity;
+                document.getElementById('currentCity').textContent = savedCity;
+                document.getElementById('locationModal').classList.remove('show');
+            }
+        });
+
+        function selectCity(city, element) {
+            selectedCity = city;
+            sessionStorage.setItem('selectedCity', city);
+            document.getElementById('currentCity').textContent = city;
+            document.getElementById('locationModal').classList.remove('show');
+
+            // Highlight selected city
+            document.querySelectorAll('.city-card, .city-list-item').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+
+            console.log(`Location set to: ${city}`);
+            // API call: fetch(`/setLocation?city=${city}`)
+        }
+
+        function openLocationModal() {
+            document.getElementById('locationModal').classList.add('show');
+        }
+
+        function closeModal() {
+            if (selectedCity) {
+                document.getElementById('locationModal').classList.remove('show');
+            } else {
+                alert('Please select a city first');
+            }
+        }
+
+        function filterCities() {
+            const searchTerm = document.getElementById('citySearch').value.toLowerCase();
+            
+            document.querySelectorAll('.city-card, .city-list-item').forEach(city => {
+                const cityName = city.textContent.toLowerCase();
+                if (cityName.includes(searchTerm)) {
+                    city.style.display = 'block';
+                } else {
+                    city.style.display = 'none';
+                }
+            });
+        }
+
+        // Banner Slider
+        let currentBanner = 0;
+        const bannerSlides = document.querySelectorAll('.banner-slide');
+        const bannerDots = document.querySelectorAll('.banner-dot');
+
+        function showBanner(index) {
+            bannerSlides.forEach(slide => slide.classList.remove('active'));
+            bannerDots.forEach(dot => dot.classList.remove('active'));
+            
+            bannerSlides[index].classList.add('active');
+            bannerDots[index].classList.add('active');
+        }
+
+        function nextBanner() {
+            currentBanner = (currentBanner + 1) % bannerSlides.length;
+            showBanner(currentBanner);
+        }
+
+        function goToBanner(index) {
+            currentBanner = index;
+            showBanner(currentBanner);
+        }
+
+        // Auto-rotate banner every 4 seconds
+        setInterval(nextBanner, 4000);
+
+        // Search Functionality
+        function searchContent() {
+            const searchTerm = document.querySelector('.search-bar').value;
+            console.log('Searching for:', searchTerm);
+            // API call: fetch(`/getMovies?searchText=${searchTerm}`)
+        }
+
+        // Filter Movies
+        function filterMovies(filter) {
+            console.log('Filtering by:', filter);
+            
+            // Update active filter
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // API call based on filter type
+            if (['telugu', 'hindi', 'english', 'tamil'].includes(filter)) {
+                // fetch(`/getMovies?language=${filter}`)
+            } else if (['2d', '3d', 'imax'].includes(filter)) {
+                // fetch(`/getMovies?format=${filter}`)
+            } else {
+                // fetch('/getMovies?all')
+            }
+        }
+
+        // View Movie Details
+        function viewMovie(movieId) {
+            console.log('Viewing movie:', movieId);
+            // Check if user is logged in
+            const isLoggedIn = sessionStorage.getItem('userToken');
+            
+            if (isLoggedIn) {
+                window.location.href = `/movie/${movieId}`;
+            } else {
+                // Show movie details but redirect to login on book tickets
+                window.location.href = `/movie/${movieId}`;
+            }
+        }
+
+        // Navigation
+        function goToLogin() {
+            window.location.href = '/login';
+        }
+
+        // Smooth scroll for movie cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const movieCards = document.querySelectorAll('.movie-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '0';
+                        entry.target.style.transform = 'translateY(20px)';
+                        
+                        setTimeout(() => {
+                            entry.target.style.transition = 'all 0.5s ease';
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            movieCards.forEach(card => observer.observe(card));
+        });
+
+        // Prevent modal close on content click
+        document.querySelector('.location-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Handle ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Mobile menu toggle (placeholder)
+        document.querySelector('.hamburger')?.addEventListener('click', function() {
+            // Add mobile menu functionality
+            console.log('Mobile menu clicked');
+        });
+    </script>
+</body>
+</html>

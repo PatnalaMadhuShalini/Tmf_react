@@ -1,0 +1,33 @@
+{
+  "name": "movieticket",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PatnalaMadhuShalini",
+  "license": "ISC",
+  "description": "first react app",
+  "devDependencies": {
+    "parcel": "^2.16.0"
+  },
+  "dependencies": {
+    "install": "^0.13.0",
+    "npm": "^11.6.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PatnalaMadhuShalini/Tmf_react.git"
+  },
+  "keywords": [
+    "react",
+    "demo",
+    "app",
+    "npm"
+  ],
+  "bugs": {
+    "url": "https://github.com/PatnalaMadhuShalini/Tmf_react/issues"
+  },
+  "homepage": "https://github.com/PatnalaMadhuShalini/Tmf_react#readme"
+}
