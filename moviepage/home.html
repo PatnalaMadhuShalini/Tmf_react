@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineYatra - Movie Ticket Booking</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2d1810; /* Deep maroon */
+            color: #ffffff;
+        }
+        header {
+            background-color: #1a0f0a; /* Darker maroon */
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700; /* Gold */
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .location-dropdown {
+            background-color: #3d2518;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-bar {
+            padding: 0.5rem;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3d2518;
+            color: #ffffff;
+        }
+        .search-bar::placeholder {
+            color: #cccccc;
+        }
+        .btn {
+            background-color: #ffd700; /* Gold */
+            color: #2d1810;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #ffed4e;
+        }
+        .hero {
+            position: relative;
+            height: 70vh;
+            overflow: hidden;
+        }
+        .carousel {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+        .carousel-item {
+            min-width: 100%;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        .carousel-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .carousel-content {
+            position: relative;
+            z-index: 1;
+        }
+        .carousel-content h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: #ffd700;
+        }
+        .carousel-content p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        .filters {
+            padding: 2rem;
+            background-color: #1a0f0a;
+            text-align: center;
+        }
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .filter-btn {
+            background-color: #3d2518;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background-color: #ffd700;
+            color: #2d1810;
+        }
+        .section {
+            padding: 2rem;
+        }
+        .section h2 {
+            margin-bottom: 2rem;
+            color: #ffd700;
+            text-align: center;
+        }
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .movie-card {
+            background-color: #3d2518;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .movie-info {
+            padding: 1rem;
+        }
+        .movie-title {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        .movie-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .rating {
+            color: #ffd700;
+        }
+        .movie-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .tag {
+            background-color: #ffd700;
+            color: #2d1810;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        .book-btn {
+            width: 100%;
+            background-color: #ffd700;
+            color: #2d1810;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .book-btn:hover {
+            background-color: #ffed4e;
+        }
+        .notify-btn {
+            width: 100%;
+            background-color: #3d2518;
+            color: #ffffff;
+            border: 1px solid #ffd700;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .notify-btn:hover {
+            background-color: #ffd700;
+            color: #2d1810;
+        }
+        footer {
+            background-color: #1a0f0a;
+            padding: 2rem;
+            text-align: center;
+        }
+        footer a {
+            color: #ffd700;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+        .profile-menu {
+            position: relative;
+            display: none;
+        }
+        .profile-menu.show {
+            display: block;
+        }
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #3d2518;
+            border-radius: 5px;
+            padding: 0.5rem 0;
+            min-width: 150px;
+        }
+        .profile-dropdown a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .profile-dropdown a:hover {
+            background-color: #ffd700;
+            color: #2d1810;
+        }
+        @media (max-width: 768px) {
+            .header-right {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .search-bar {
+                width: 200px;
+            }
+            .carousel-content h1 {
+                font-size: 2rem;
+            }
+            .movies-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">CineYatra</div>
+        <div class="header-right">
+            <select class="location-dropdown" id="location-select">
+                <option value="Vijayawada">Vijayawada</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Chennai">Chennai</option>
+            </select>
+            <input type="text" class="search-bar" id="search-input" placeholder="Search for movies">
+            <div id="guest-buttons">
+                <button class="btn" id="login-btn">Login</button>
+                <button class="btn" id="signup-btn">Sign Up</button>
+            </div>
+            <div id="user-profile" style="display: none;">
+                <span id="user-name">Welcome, User</span>
+                <div class="profile-menu" id="profile-menu">
+                    <div class="profile-dropdown">
+                        <a href="#" id="my-profile">My Profile</a>
+                        <a href="#" id="my-bookings">My Bookings</a>
+                        <a href="#" id="logout">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="carousel" id="hero-carousel">
+            <!-- Carousel items will be dynamically inserted -->
+        </div>
+    </section>
+
+    <section class="filters">
+        <div class="filter-buttons" id="language-filters">
+            <!-- Language buttons -->
+        </div>
+        <div class="filter-buttons" id="genre-filters">
+            <!-- Genre buttons -->
+        </div>
+        <div class="filter-buttons" id="format-filters">
+            <!-- Format buttons -->
+        </div>
+    </section>
+
+    <section class="section" id="now-showing">
+        <h2>Now Showing</h2>
+        <div class="movies-grid" id="now-showing-grid">
+            <!-- Now showing movies -->
+        </div>
+    </section>
+
+    <section class="section" id="coming-soon">
+        <h2>Coming Soon</h2>
+        <div class="movies-grid" id="coming-soon-grid">
+            <!-- Coming soon movies -->
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 CineYatra. All rights reserved.</p>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+    </footer>
+
+    <script>
+        // Mock data
+        const featuredMovies = [
+            { title: 'Epic Adventure', image: 'https://via.placeholder.com/1920x600?text=Epic+Adventure', description: 'A thrilling journey awaits.' },
+            { title: 'Romantic Tale', image: 'https://via.placeholder.com/1920x600?text=Romantic+Tale', description: 'Love conquers all.' },
+            { title: 'Sci-Fi Spectacle', image: 'https://via.placeholder.com/1920x600?text=Sci-Fi+Spectacle', description: 'Explore the unknown.' }
+        ];
+
+        const nowShowingMovies = [
+            { id: 1, title: 'Action Thriller', posterUrl: 'https://via.placeholder.com/300x400?text=Action+Thriller', genre: 'Action', language: 'English', rating: 4.5, duration: '120 min', certificate: 'UA' },
+            { id: 2, title: 'Romantic Comedy', posterUrl: 'https://via.placeholder.com/300x400?text=Romantic+Comedy', genre: 'Comedy', language: 'Hindi', rating: 4.2, duration: '110 min', certificate: 'U' },
+            { id: 3, title: 'Sci-Fi Adventure', posterUrl: 'https://via.placeholder.com/300x400?text=Sci-Fi+Adventure', genre: 'Sci-Fi', language: 'English', rating: 4.8, duration: '140 min', certificate: 'UA' },
+            { id: 4, title: 'Horror Classic', posterUrl: 'https://via.placeholder.com/300x400?text=Horror+Classic', genre: 'Horror', language: 'Telugu', rating: 3.9, duration: '100 min', certificate: 'A' }
+        ];
+
+        const comingSoonMovies = [
+            { id: 5, title: 'Fantasy Epic', posterUrl: 'https://via.placeholder.com/300x400?text=Fantasy+Epic', genre: 'Fantasy', language: 'English', releaseDate: '2025-02-15' },
+            { id: 6, title: 'Animation Fun', posterUrl: 'https://via.placeholder.com/300x400?text=Animation+Fun', genre: 'Animation', language: 'Hindi', releaseDate: '2025-03-01' }
+        ];
+
+        const languages = ['Telugu', 'Hindi', 'English', 'Tamil'];
+        const genres = ['Action', 'Comedy', 'Drama', 'Thriller'];
+        const formats = ['2D', '3D', 'IMAX', '4DX'];
+
+        let currentSlide = 0;
+        let carouselInterval;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            setupCarousel();
+            setupFilters();
+            displayNowShowing();
+            displayComingSoon();
+            setupEventListeners();
+        });
+
+        function setupCarousel() {
+            const carousel = document.getElementById('hero-carousel');
+            featuredMovies.forEach(movie => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.style.backgroundImage = `url(${movie.image})`;
+                item.innerHTML = `
+                    <div class="carousel-content">
+                        <h1>${movie.title}</h1>
+                        <p>${movie.description}</p>
+                        <button class="btn">Book Now</button>
+                    </div>
+                `;
+                carousel.appendChild(item);
+            });
+            startCarousel();
+        }
+
+        function startCarousel() {
+            carouselInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % featuredMovies.length;
+                updateCarousel();
+            }, 5000);
+        }
+
+        function updateCarousel() {
+            const carousel = document.getElementById('hero-carousel');
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        function setupFilters() {
+            const languageFilters = document.getElementById('language-filters');
+            const genreFilters = document.getElementById('genre-filters');
+            const formatFilters = document.getElementById('format-filters');
+
+            languages.forEach(lang => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.textContent = lang;
+                btn.addEventListener('click', () => filterMovies('language', lang));
+                languageFilters.appendChild(btn);
+            });
+
+            genres.forEach(genre => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.textContent = genre;
+                btn.addEventListener('click', () => filterMovies('genre', genre));
+                genreFilters.appendChild(btn);
+            });
+
+            formats.forEach(format => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.textContent = format;
+                btn.addEventListener('click', () => filterMovies('format', format));
+                formatFilters.appendChild(btn);
+            });
+        }
+
+        function displayNowShowing() {
+            const grid = document.getElementById('now-showing-grid');
+            grid.innerHTML = '';
+            nowShowingMovies.forEach(movie => {
+                const card = createMovieCard(movie, true);
+                grid.appendChild(card);
+            });
+        }
+
+        function displayComingSoon() {
+            const grid = document.getElementById('coming-soon-grid');
+            grid.innerHTML = '';
+            comingSoonMovies.forEach(movie => {
+                const card = createMovieCard(movie, false);
+                grid.appendChild(card);
+            });
+        }
+
+        function createMovieCard(movie, isNowShowing) {
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            card.innerHTML = `
+                <img src="${movie.posterUrl}" alt="${movie.title}">
+                <div class="movie-info">
+                    <h3 class="movie-title">${movie.title}</h3>
+                    <div class="movie-details">
+                        <span class="rating">★ ${movie.rating}</span>
+                        <span>${movie.duration || movie.releaseDate}</span>
+                    </div>
+                    <div class="movie-tags">
+                        <span class="tag">${movie.genre}</span>
+                        <span class="tag">${movie.language}</span>
+                        ${movie.certificate ? `<span class="tag">${movie.certificate}</span>` : ''}
+                    </div>
+                    <button class="${isNowShowing ? 'book-btn' : 'notify-btn'}">${isNowShowing ? 'Book Tickets' : 'Notify Me'}</button>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                if (isNowShowing) {
+                    // Simulate redirect to movie details/theaters
+                    alert(`Redirecting to ${movie.title} booking page`);
+                }
+            });
+            return card;
+        }
+
+        function filterMovies(type, value) {
+            // Simple filter simulation
+            alert(`Filtering by ${type}: ${value}`);
+            // In a real app, this would update the movie grids based on the filter
+        }
+
+        function setupEventListeners() {
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const query = e.target.value;
+                if (query.length > 2) {
+                    // Simulate search suggestions
+                    console.log(`Searching for: ${query}`);
+                }
+            });
+
+            document.getElementById('location-select').addEventListener('change', (e) => {
+                alert(`Location changed to: ${e.target.value}`);
+                // In a real app, reload page with new location data
+            });
+
+            document.getElementById('login-btn').addEventListener('click', () => {
+                alert('Redirecting to login page');
+            });
+
+            document.getElementById('signup-btn').addEventListener('click', () => {
+                alert('Redirecting to sign up page');
+            });
+
+            // For demo, toggle between guest and logged-in
+            document.getElementById('user-name').addEventListener('click', () => {
+                document.getElementById('profile-menu').classList.toggle('show');
+            });
+
+            document.getElementById('logout').addEventListener('click', () => {
+                document.getElementById('guest-buttons').style.display = 'flex';
+                document.getElementById('user-profile').style.display = 'none';
+            });
+
+            // Demo: Simulate login
+            document.getElementById('login-btn').addEventListener('click', () => {
+                document.getElementById('guest-buttons').style.display = 'none';
+                document.getElementById('user-profile').style.display = 'flex';
+            });
+        }
+    </script>
+</body>
+</html>

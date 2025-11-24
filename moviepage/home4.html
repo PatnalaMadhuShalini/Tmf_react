@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticket Booking - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        header {
+            background-color: #1f1f1f;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: #ff6b6b;
+        }
+        .hero {
+            background-image: url('https://via.placeholder.com/1920x600?text=Movie+Theater');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin: 0;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        .btn {
+            background-color: #ff6b6b;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #ff5252;
+        }
+        .featured {
+            padding: 2rem;
+            text-align: center;
+        }
+        .featured h2 {
+            margin-bottom: 2rem;
+        }
+        .movies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .movie {
+            background-color: #2e0101 ;
+            padding: 1rem;
+            border-radius: 5px;
+            display: block; /* Ensure movies can be hidden */
+        }
+        .movie img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .movie h3 {
+            margin: 0.5rem 0;
+        }
+        .search {
+            padding: 2rem;
+            background-color: #1f1f1f;
+            text-align: center;
+        }
+        .search input {
+            padding: 0.5rem;
+            width: 50%;
+            max-width: 400px;
+            border: none;
+            border-radius: 5px;
+        }
+        footer {
+            background-color: #1f1f1f;
+            padding: 1rem;
+            text-align: center;
+        }
+        footer a {
+            color: #ff6b6b;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+      <div id="root"></div>
+
+    <!-- CDN links for React, ReactDOM, and Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <header>
+        <div class="logo">MovieBook</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Movies</a></li>
+                <li><a href="#">Bookings</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="hero">
+        <div>
+            <h1>Welcome to MovieBook</h1>
+            <p>Book your favorite movie tickets online with ease.</p>
+            <a href="#" class="btn" id="book-now-btn">Book Now</a>
+        </div>
+    </section>
+    <section class="featured">
+        <h2>Featured Movies</h2>
+        <div class="movies">
+            <!-- Movies  to  be dynamically inserted here by JavaScript -->
+
+        </div>
+    </section>
+    <section class="search">
+        <h2>Search Movies</h2>
+        <input type="text" id="search-input" placeholder="Search for movies...">
+    </section>
+
+    
+
+    <footer>
+        <p>&copy; 2025 MovieBook. All rights reserved.</p>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+    </footer>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const Movies = () => {
+            const [movies] = useState([
+                { title: 'Inception', img: 'https://via.placeholder.com/200x200?text=Inception' },
+                { title: 'The Dark Knight', img: 'https://via.placeholder.com/200x200?text=Dark+Knight' },
+                { title: 'Interstellar', img: 'https://via.placeholder.com/200x200?text=Interstellar' },
+                { title: 'Parasite', img: 'https://via.placeholder.com/200x200?text=Parasite' },
+                { title: 'Avengers: Endgame', img: 'https://via.placeholder.com/200x200?text=Endgame' },
+                { title: 'Joker', img: 'https://via.placeholder.com/200x200?text=Joker' }
+            ]);
+
+            return movies.map((movie, index) => (
+                <div key={index} className="movie">
+                    <img src={movie.img} alt={movie.title} />
+                    <h3>{movie.title}</h3>
+                </div>
+            ));
+        };
+
+        const root = ReactDOM.createRoot(document.querySelector('.movies'));
+        root.render(<Movies />);
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticket Booking - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        header {
+            background-color: #1f1f1f;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: #ff6b6b;
+        }
+        .hero {
+            background-image: url('https://via.placeholder.com/1920x600?text=Movie+Theater');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin: 0;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        .btn {
+            background-color: #ff6b6b;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #ff5252;
+        }
+        .featured {
+            padding: 2rem;
+            text-align: center;
+        }
+        .featured h2 {
+            margin-bottom: 2rem;
+        }
+        .movies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .movie {
+            background-color: #2e0101 ;
+            padding: 1rem;
+            border-radius: 5px;
+            display: block; /* Ensure movies can be hidden */
+        }
+        .movie img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .movie h3 {
+            margin: 0.5rem 0;
+        }
+        .search {
+            padding: 2rem;
+            background-color: #1f1f1f;
+            text-align: center;
+        }
+        .search input {
+            padding: 0.5rem;
+            width: 50%;
+            max-width: 400px;
+            border: none;
+            border-radius: 5px;
+        }
+        footer {
+            background-color: #1f1f1f;
+            padding: 1rem;
+            text-align: center;
+        }
+        footer a {
+            color: #ff6b6b;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">MovieBook</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Movies</a></li>
+                <li><a href="#">Bookings</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="hero">
+        <div>
+            <h1>Welcome to MovieBook</h1>
+            <p>Book your favorite movie tickets online with ease.</p>
+            <a href="#" class="btn" id="book-now-btn">Book Now</a>
+        </div>
+    </section>
+    <section class="featured">
+        <h2>Featured Movies</h2>
+        <div class="movies">
+            <!-- Movies will be dynamically inserted here by JavaScript -->
+        </div>
+    </section>
+    <section class="search">
+        <h2>Search Movies</h2>
+        <input type="text" id="search-input" placeholder="Search for movies...">
+    </section>
+    <footer>
+        <p>&copy; 2025 MovieBook. All rights reserved.</p>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+    </footer>
+
+    <script>
+        // Array of movie data to display
+        const moviesData = [
+            { title: 'Action Thriller: The Pursuit', genre: 'Action', description: 'Experience the high-octane pursuit.', image: 'https://via.placeholder.com/200x300?text=Movie+1' },
+            { title: 'Romantic Comedy: Love Actually', genre: 'Comedy', description: 'Laugh and love with this classic.', image: 'https://via.placeholder.com/200x300?text=Movie+2' },
+            { title: 'Sci-Fi Adventure: Stellar Voyage', genre: 'Sci-Fi', description: 'Journey to the stars and beyond.', image: 'https://via.placeholder.com/200x300?text=Movie+3' },
+            { title: 'Horror Classic: The Haunting', genre: 'Horror', description: 'Feel the fear in this spine-chilling tale.', image: 'https://via.placeholder.com/200x300?text=Movie+4' },
+            { title: 'Family Fun: Animated Tales', genre: 'Animation', description: 'A fun-filled adventure for the whole family.', image: 'https://via.placeholder.com/200x300?text=Movie+5' },
+            { title: 'Fantasy Epic: The Dragon\'s Return', genre: 'Fantasy', description: 'An epic tale of magic and dragons.', image: 'https://via.placeholder.com/200x300?text=Movie+6' }
+        ];
+
+        // Get references to DOM elements
+        const moviesContainer = document.querySelector('.movies');
+        const searchInput = document.getElementById('search-input');
+        const bookNowBtn = document.getElementById('book-now-btn');
+
+        // Function to create and display movie cards
+        function displayMovies(movies) {
+            moviesContainer.innerHTML = ''; // Clear existing movies
+            movies.forEach(movie => {
+                const movieElement = document.createElement('div');
+                movieElement.classList.add('movie');
+                movieElement.innerHTML = `
+                    <img src="${movie.image}" alt="${movie.title}">
+                    <h3>${movie.title}</h3>
+                    <p>${movie.description}</p>
+                `;
+                moviesContainer.appendChild(movieElement);
+            });
+        }
+
+        // Function to handle the search filter
+        function filterMovies() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredMovies = moviesData.filter(movie => {
+                return movie.title.toLowerCase().includes(searchTerm) || movie.description.toLowerCase().includes(searchTerm);
+            });
+            displayMovies(filteredMovies);
+        }
+
+        // Event listener for the search input
+        searchInput.addEventListener('input', filterMovies);
+
+        // Event listener for the "Book Now" button
+        bookNowBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent the default anchor link behavior
+            alert('Redirecting to the booking page...');
+            // In a real application, you would navigate to the booking page here.
+        });
+        
+        // Initial display of all movies when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            displayMovies(moviesData);
+        });
+    </script>
+</body>
+</html>
+
