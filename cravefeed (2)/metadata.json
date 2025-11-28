@@ -1,0 +1,7 @@
+{
+  "name": "CraveFeed",
+  "description": "A premium food delivery application featuring smart AI search, real-time order tracking, and a seamless checkout experience.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
